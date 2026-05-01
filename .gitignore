@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Virtualenvs
+venv/
+.venv/
+
+# Local configuration (copy .env.example to .env)
+.env
+
+# ContextCov working directories
+.contextcov/          # installed shims and process-check runtime
+.data/                # repositories cloned by --repo
+
+# Generated mappings. Commit yours if you want the checks under review;
+# these patterns only cover the default output locations.
+*.mapping.json
+*.mapping.json.source.sha256
+!examples/*.mapping.json
+!examples/*.mapping.json.source.sha256
+
+# LLM response cache
+*.db

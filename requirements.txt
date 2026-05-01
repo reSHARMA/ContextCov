@@ -1,0 +1,20 @@
+# Instruction-file parsing
+mistletoe>=1.0.0
+requests>=2.28.0
+python-dotenv>=1.0.0
+
+# LLM providers (openai client also serves Azure/Gemini/Ollama-compatible endpoints)
+openai>=1.0.0
+
+# SOURCE_CHECK: regex + Tree-sitter AST matching.
+# The upper bound is required: tree-sitter >=0.22 changed the Language()
+# constructor, which breaks tree-sitter-languages 1.10.2 and silently
+# disables every AST-based check.
+tree-sitter>=0.20.0,<0.22
+tree-sitter-languages==1.10.2
+
+# ARCH_DETERMINISTIC: import-graph queries
+networkx>=3.0
+
+# Test-only
+pytest>=7.0

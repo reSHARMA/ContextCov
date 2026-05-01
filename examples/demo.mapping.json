@@ -1,0 +1,102 @@
+{
+  "4f0a9a622a300a622ae941b96717dfe45fbbd1c84f8d4480ff59e67ce26a1410": {
+    "stable_id": "4f0a9a622a300a622ae941b96717dfe45fbbd1c84f8d4480ff59e67ce26a1410",
+    "header_path": "Agent Instructions",
+    "original_content": "Agent Instructions",
+    "compressed": "Follow the agent instructions.",
+    "strategies": []
+  },
+  "e837b0124c6cd75a43e148a88da58df432312d02eeb99525e2a972e272403512": {
+    "stable_id": "e837b0124c6cd75a43e148a88da58df432312d02eeb99525e2a972e272403512",
+    "header_path": "Agent Instructions/Code style",
+    "original_content": "Code style",
+    "compressed": "Follow the prescribed code style.",
+    "strategies": []
+  },
+  "661e4f92f69e94c8c2d13755e4db4640f29e4705a722d2d7a061615f9e08b84a": {
+    "stable_id": "661e4f92f69e94c8c2d13755e4db4640f29e4705a722d2d7a061615f9e08b84a",
+    "header_path": "Agent Instructions/Code style",
+    "original_content": "Never use tab characters for indentation in Python files.",
+    "compressed": "In Python files, use spaces instead of tab characters for indentation.",
+    "strategies": [
+      {
+        "type": "SOURCE_CHECK",
+        "confidence": 0.99,
+        "trigger": "**/*.py",
+        "directive": "Fail if any Python file contains tab characters used for indentation; require spaces-only indentation.",
+        "static_check": {
+          "target_lang": "text",
+          "code": "import re\nresult = \"PASS\"\ntext = source_bytes.decode('utf-8', errors='replace')\nfor line in text.splitlines():\n    if not line.strip():\n        continue\n    leading = line[:len(line) - len(line.lstrip(' \\t'))]\n    if '\\t' in leading:\n        result = 'FAIL'\n        break\n"
+        }
+      }
+    ]
+  },
+  "8399852bdcbfaa3bb2e24737dcb679ac271ea54f7e505460b261895a23ae6fa9": {
+    "stable_id": "8399852bdcbfaa3bb2e24737dcb679ac271ea54f7e505460b261895a23ae6fa9",
+    "header_path": "Agent Instructions/Code style",
+    "original_content": "Every public function must have a docstring.",
+    "compressed": "In the code style guidelines, every public function must include a docstring.",
+    "strategies": [
+      {
+        "type": "SOURCE_CHECK",
+        "confidence": 0.96,
+        "trigger": "**/*.py",
+        "directive": "Fail if any public function or method definition (name does not start with '_') lacks a docstring immediately under the definition.",
+        "static_check": {
+          "target_lang": "python",
+          "code": "import ast\n\nresult = \"PASS\"\n\ntry:\n    source = source_bytes.decode('utf-8', errors='replace')\nexcept Exception:\n    source = ''\n\nif source.strip():\n    try:\n        module = ast.parse(source)\n    except SyntaxError:\n        module = None\n\n    if module is not None:\n        for node in ast.walk(module):\n            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):\n                if node.name.startswith('_'):\n                    continue\n\n                body = getattr(node, 'body', [])\n                has_docstring = False\n\n                if body:\n                    first_stmt = body[0]\n                    if isinstance(first_stmt, ast.Expr):\n                        value = first_stmt.value\n                        if isinstance(value, ast.Constant) and isinstance(value.value, str):\n                            has_docstring = True\n                        elif hasattr(ast, 'Str') and isinstance(value, ast.Str):\n                            has_docstring = True\n\n                if not has_docstring:\n                    result = 'FAIL'\n                    break\n"
+        }
+      }
+    ]
+  },
+  "66bef8969a4fdc8e914a951969526c3c18d62e85d9e0162a63ab26d8d15c69f4": {
+    "stable_id": "66bef8969a4fdc8e914a951969526c3c18d62e85d9e0162a63ab26d8d15c69f4",
+    "header_path": "Agent Instructions/Architecture",
+    "original_content": "Architecture",
+    "compressed": "This section covers architecture-related agent instructions.",
+    "strategies": []
+  },
+  "ebe8ff4d3715ae3af7f2902d8ca52338b1a8a864e7e20f7ec87d708258347302": {
+    "stable_id": "ebe8ff4d3715ae3af7f2902d8ca52338b1a8a864e7e20f7ec87d708258347302",
+    "header_path": "Agent Instructions/Architecture",
+    "original_content": "Code in web/ must not import from core/ directly; go through api/.",
+    "compressed": "In the Architecture context, code in web/ must not import directly from core/ and must access it through api/.",
+    "strategies": [
+      {
+        "type": "ARCH_DETERMINISTIC",
+        "confidence": 0.98,
+        "trigger": "web/*",
+        "directive": "Build dependency graph; fail if any file under web/ imports directly from core/; allow access to core/ only through api/.",
+        "arch_deterministic_check": {
+          "code": "result = (True, \"\")\n\nweb_nodes = [n for n in graph.nodes() if n.startswith(\"web/\")]\ncore_nodes = set(n for n in graph.nodes() if n.startswith(\"core/\"))\n\nfor web_node in web_nodes:\n    for imported in graph.successors(web_node):\n        if imported in core_nodes:\n            result = (\n                False,\n                f\"Files under web/ must not import directly from core/. Violation: {web_node} imports {imported}. Access to core/ must go through api/.\"\n            )\n            break\n    if result[0] is False:\n        break"
+        }
+      }
+    ]
+  },
+  "5cb2146a2d1f271139d3524b496b0b430288046d75af7894795a84ca522269db": {
+    "stable_id": "5cb2146a2d1f271139d3524b496b0b430288046d75af7894795a84ca522269db",
+    "header_path": "Agent Instructions/Workflow",
+    "original_content": "Workflow",
+    "compressed": "This section defines the agent workflow instructions.",
+    "strategies": []
+  },
+  "bfa0e025484a39af9dfcbb5c278bd45aede17a9fdc4fa0ab80a2233fcf6c6561": {
+    "stable_id": "bfa0e025484a39af9dfcbb5c278bd45aede17a9fdc4fa0ab80a2233fcf6c6561",
+    "header_path": "Agent Instructions/Workflow",
+    "original_content": "Never run git push --force on this repository.",
+    "compressed": "In the repository workflow, never run git push --force.",
+    "strategies": [
+      {
+        "type": "PROCESS_CHECK",
+        "confidence": 0.98,
+        "trigger": "git",
+        "directive": "Block execution of 'git push --force' and equivalent force-push flags such as 'git push -f'.",
+        "process_check": {
+          "code": "if env.get(\"CONTEXTCOV_ALLOW_UNSAFE\") == \"true\":\n    result = (True, \"\")\nelse:\n    args_str = \" \".join(args).lower()\n    force_flags = [\"--force\", \"-f\", \"--force-with-lease\"]\n    is_push = any(a.lower() == \"push\" for a in args)\n    has_force = any(flag in args_str or flag in [a.lower() for a in args] for flag in force_flags)\n\n    if trigger == \"git\" and is_push and has_force:\n        result = (False, \"Force pushing with git push --force or equivalent flags is forbidden. Please update the README to specify exceptions or set CONTEXTCOV_ALLOW_UNSAFE=true.\")\n    else:\n        result = (True, \"\")",
+          "priority": 0,
+          "enforcement_level": "block"
+        }
+      }
+    ]
+  }
+}
